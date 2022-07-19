@@ -12,5 +12,5 @@ async-std = { version = "1.11.0", features = ["attributes"] }
 surf = "2.3.2"
 itertools = "0.10.3"
 futures = "0.3.21"
-sqlx = { version = "0.5.13", features = [ "runtime-async-std-native-tls", "sqlite", "migrate" ] }
+sqlx = { version = "0.6.0", features = [ "runtime-async-std-native-tls", "sqlite", "migrate" ] }
 lazy_static = "1.4.0"
