@@ -57,7 +57,8 @@ impl SteamWorker {
             .await?
             .cycle()
             .skip_while(|app_id| (app_id <= &memento).pipe(future::ready))
-            .take_while(|app_id| (app_id != &memento).pipe(future::ready));
+            .take_while(|app_id| (app_id != &memento).pipe(future::ready))
+            .chain(memento.pipe(future::ready).pipe(stream::once));
 
         let count = app_ids
             .inspect(|app_id| println!("Getting game - {}", app_id))
