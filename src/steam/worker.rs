@@ -44,7 +44,7 @@ pub struct SteamWorker {
 }
 
 impl SteamWorker {
-    const CONCURRENT_REQUESTS: usize = 100;
+    const MAX_CONCURRENCY: usize = 100;
 
     pub async fn work(&self) -> Result<(), SteamWorkerError> {
         println!("Getting memento");
@@ -56,12 +56,13 @@ impl SteamWorker {
             .get_game_ids()
             .await?
             .cycle()
-            .skip_while(|app_id| (app_id < &memento).pipe(future::ready));
+            .skip_while(|app_id| (app_id <= &memento).pipe(future::ready))
+            .take_while(|app_id| (app_id != &memento).pipe(future::ready));
 
         let count = app_ids
             .inspect(|app_id| println!("Getting game - {}", app_id))
             .map(|app_id| self.get_game(app_id))
-            .buffer_unordered(Self::CONCURRENT_REQUESTS)
+            .buffer_unordered(Self::MAX_CONCURRENCY)
             .inspect_ok(|game_with_achv| println!("Setting app - {}", game_with_achv.game.id))
             .and_then(|game_with_achv| self.set_game(game_with_achv))
             .take_while(|res| self.is_critical(res).not().pipe(future::ready))
