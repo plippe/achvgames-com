@@ -1,14 +1,8 @@
-mod environment;
-mod steam;
-mod utils;
-
-#[macro_use]
-extern crate lazy_static;
-use crate::steam::api_steampowered_com::SteamClient;
-use crate::steam::store::game_achievements::SteamGameAchievementsStore;
-use crate::steam::store::games::SteamGamesStore;
-use crate::steam::worker::SteamWorker;
-use crate::utils::PipeExt;
+use achvgames_com::environment;
+use achvgames_com::steam::api_steampowered_com::SteamClient;
+use achvgames_com::steam::store::game_achievements::SteamGameAchievementsStore;
+use achvgames_com::steam::store::games::SteamGamesStore;
+use achvgames_com::steam::worker::SteamWorker;
 use sqlx::sqlite::SqlitePool;
 use surf::Client as SurfClient;
 
