@@ -1,4 +1,4 @@
-/db/sqlite.db-*
+/db/sqlite.db*
 /target
 
 .env
