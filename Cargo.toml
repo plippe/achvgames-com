@@ -14,3 +14,4 @@ itertools = "0.10.3"
 futures = "0.3.21"
 sqlx = { version = "0.6.0", features = [ "runtime-async-std-native-tls", "sqlite", "migrate" ] }
 lazy_static = "1.4.0"
+tide = "0.16.0"
