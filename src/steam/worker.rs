@@ -44,11 +44,11 @@ pub struct SteamWorker {
 }
 
 impl SteamWorker {
-    const MAX_CONCURRENCY: usize = 100;
+    const MAX_CONCURRENCY: usize = 10;
 
     pub async fn work(&self) -> Result<(), SteamWorkerError> {
         println!("Getting memento");
-        let memento = self.get_memento().await?.unwrap_or(0);
+        let memento = self.get_memento().await?.unwrap_or_default();
         println!("Getting memento - {}", memento);
 
         println!("Getting app ids");

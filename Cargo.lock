@@ -19,6 +19,7 @@ dependencies = [
  "async-graphql",
  "async-graphql-tide",
  "async-std",
+ "base64 0.13.0",
  "futures",
  "itertools",
  "lazy_static",

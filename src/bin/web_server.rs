@@ -1,21 +1,28 @@
+use achvgames_com::environment;
+use achvgames_com::steam::store::games::SteamGamesStore;
 use async_graphql::{
     http::{playground_source, GraphQLPlaygroundConfig},
     EmptyMutation, EmptySubscription, Object, Schema,
 };
+use sqlx::sqlite::SqlitePool;
 use tide::{http::mime, Body, Response, StatusCode};
 
 struct QueryRoot;
 
 #[Object]
 impl QueryRoot {
-    async fn foo(&self) -> String {
-        "bar".to_owned()
+    async fn steam(&self) -> achvgames_com::steam::Query {
+        achvgames_com::steam::Query
     }
 }
 
 #[async_std::main]
 async fn main() -> tide::Result<()> {
-    let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription).finish();
+    let pool = SqlitePool::connect(&environment::DATABASE_URL).await?;
+
+    let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
+        .data(SteamGamesStore { pool: pool.clone() })
+        .finish();
 
     let mut app = tide::new();
 

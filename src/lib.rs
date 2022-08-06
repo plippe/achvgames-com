@@ -1,4 +1,5 @@
 pub mod environment;
+pub mod graphql;
 pub mod steam;
 pub mod utils;
 
