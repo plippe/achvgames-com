@@ -136,8 +136,14 @@ impl SteamWorker {
 
     fn is_critical(&self, res: &Result<(), SteamWorkerError>) -> bool {
         match res {
-            Err(SteamWorkerError::Store(_)) => true,
-            Err(SteamWorkerError::Client(SteamClientError::TooManyRequests)) => true,
+            Err(SteamWorkerError::Store(err)) => {
+                println!("Store error: {:?}", err);
+                true
+            }
+            Err(SteamWorkerError::Client(SteamClientError::TooManyRequests)) => {
+                println!("Steam too many requests");
+                true
+            }
             Err(SteamWorkerError::Client(SteamClientError::Unknown(status, body))) => {
                 println!("Unknown steam client response: {}, {}", status, body);
                 true
