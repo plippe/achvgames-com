@@ -1,8 +1,9 @@
-use crate::graphql::{Cursor, Page, PageInfo};
 use crate::steam::store::game_achievements::SteamGameAchievementsStore;
+use crate::steam::store::games::GameFilter;
 use crate::steam::store::games::SteamGamesStore;
 use crate::steam::{Game, GameAchievement, GameImages};
-use crate::utils::PipeExt;
+use crate::utils::page::{Cursor, Page, PageInfo};
+use crate::utils::pipe::PipeExt;
 
 pub struct Query;
 
@@ -19,11 +20,12 @@ impl Query {
     async fn games(
         &self,
         ctx: &async_graphql::Context<'_>,
+        filter: Option<GameFilter>,
         #[graphql(default = 10, validator(minimum = 10, maximum = 10))] first: usize,
         after: Option<Cursor>,
     ) -> Page<Game> {
         ctx.data_unchecked::<SteamGamesStore>()
-            .get_all(first, after.and_then(Cursor::try_into_u32))
+            .get_all(filter, first, after.and_then(Cursor::try_into_u32))
             .await
             .unwrap_or_default()
             .pipe(|nodes| Page {

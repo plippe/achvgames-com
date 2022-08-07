@@ -1,7 +1,20 @@
 use crate::steam;
-use crate::utils::PipeExt;
+use crate::utils::pipe::PipeExt;
 use async_graphql::OutputType;
 use async_graphql::{scalar, SimpleObject};
+
+#[derive(SimpleObject)]
+#[graphql(concrete(name = "PageSteamGame", params(steam::Game)))]
+pub struct Page<A: OutputType> {
+    pub nodes: Vec<A>,
+    pub page_info: PageInfo,
+}
+
+#[derive(SimpleObject)]
+pub struct PageInfo {
+    pub has_next_page: bool,
+    pub end_cursor: Option<Cursor>,
+}
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct Cursor(pub String);
@@ -18,17 +31,4 @@ impl Cursor {
     pub fn from_u32(value: u32) -> Cursor {
         base64::encode_config(value.to_string(), base64::URL_SAFE_NO_PAD).pipe(Cursor)
     }
-}
-
-#[derive(SimpleObject)]
-#[graphql(concrete(name = "PageSteamGame", params(steam::Game)))]
-pub struct Page<A: OutputType> {
-    pub nodes: Vec<A>,
-    pub page_info: PageInfo,
-}
-
-#[derive(SimpleObject)]
-pub struct PageInfo {
-    pub has_next_page: bool,
-    pub end_cursor: Option<Cursor>,
 }

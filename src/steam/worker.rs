@@ -6,7 +6,7 @@ use crate::steam::store::game_achievements::SteamGameAchievementsStore;
 use crate::steam::store::games::SteamGamesStore;
 use crate::steam::store::SteamStoreError;
 use crate::steam::GameWithAchievements;
-use crate::utils::PipeExt;
+use crate::utils::pipe::PipeExt;
 use futures::future;
 use futures::stream::{self, StreamExt, TryStreamExt};
 use itertools::Itertools;
