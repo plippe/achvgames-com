@@ -1,4 +1,5 @@
 use achvgames_com::environment;
+use achvgames_com::steam::store::game_achievements::SteamGameAchievementsStore;
 use achvgames_com::steam::store::games::SteamGamesStore;
 use async_graphql::{
     http::{playground_source, GraphQLPlaygroundConfig},
@@ -11,8 +12,8 @@ struct QueryRoot;
 
 #[Object]
 impl QueryRoot {
-    async fn steam(&self) -> achvgames_com::steam::Query {
-        achvgames_com::steam::Query
+    async fn steam(&self) -> achvgames_com::steam::graphql::Query {
+        achvgames_com::steam::graphql::Query
     }
 }
 
@@ -22,6 +23,7 @@ async fn main() -> tide::Result<()> {
 
     let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
         .data(SteamGamesStore { pool: pool.clone() })
+        .data(SteamGameAchievementsStore { pool: pool.clone() })
         .finish();
 
     let mut app = tide::new();

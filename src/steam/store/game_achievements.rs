@@ -46,4 +46,22 @@ impl SteamGameAchievementsStore {
         .map(|_| ())
         .map_err(SteamStoreError::Sqlx)
     }
+
+    pub async fn get_by_game_id(
+        &self,
+        game_id: u32,
+    ) -> Result<Vec<GameAchievement>, SteamStoreError> {
+        sqlx::query_as!(
+            GameAchievement,
+            r#"
+            SELECT name, description, icon_locked_url, icon_unlocked_url
+            FROM steam_game_achievements
+            WHERE steam_game_id = ?
+            "#,
+            game_id,
+        )
+        .fetch_all(&self.pool)
+        .await
+        .map_err(SteamStoreError::Sqlx)
+    }
 }

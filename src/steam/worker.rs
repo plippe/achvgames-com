@@ -44,7 +44,7 @@ pub struct SteamWorker {
 }
 
 impl SteamWorker {
-    const MAX_CONCURRENCY: usize = 10;
+    const MAX_CONCURRENCY: usize = 100;
 
     pub async fn work(&self) -> Result<(), SteamWorkerError> {
         println!("Getting memento");

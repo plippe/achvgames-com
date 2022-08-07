@@ -36,7 +36,23 @@ impl SteamGamesStore {
         .map_err(SteamStoreError::Sqlx)
     }
 
-    pub async fn get(
+    pub async fn get_by_id(&self, id: u32) -> Result<Option<Game>, SteamStoreError> {
+        sqlx::query_as!(
+            Game,
+            r#"
+            SELECT id as "id!: _", name as "name!"
+            FROM steam_games
+            WHERE id = ?
+            LIMIT 1
+            "#,
+            id
+        )
+        .fetch_optional(&self.pool)
+        .await
+        .map_err(SteamStoreError::Sqlx)
+    }
+
+    pub async fn get_all(
         &self,
         first: usize,
         after: Option<u32>,
