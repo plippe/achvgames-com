@@ -1,7 +1,7 @@
 use crate::graphql::{Cursor, Page, PageInfo};
 use crate::steam::store::game_achievements::SteamGameAchievementsStore;
 use crate::steam::store::games::SteamGamesStore;
-use crate::steam::{Game, GameAchievement};
+use crate::steam::{Game, GameAchievement, GameImages};
 use crate::utils::PipeExt;
 
 pub struct Query;
@@ -43,5 +43,14 @@ impl Game {
             .get_by_game_id(self.id)
             .await
             .unwrap_or_default()
+    }
+
+    async fn images(&self) -> GameImages {
+        GameImages {
+            header_url: format!(
+                "https://cdn.cloudflare.steamstatic.com/steam/apps/{}/header.jpg",
+                self.id
+            ),
+        }
     }
 }

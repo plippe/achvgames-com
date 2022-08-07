@@ -21,6 +21,11 @@ pub struct GameAchievement {
     pub icon_unlocked_url: String,
 }
 
+#[derive(Debug, Clone, SimpleObject)]
+pub struct GameImages {
+    pub header_url: String,
+}
+
 #[derive(Debug, Clone)]
 pub struct GameWithAchievements {
     pub game: Game,
