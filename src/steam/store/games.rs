@@ -2,6 +2,7 @@ use crate::steam::store::SteamStoreError;
 use crate::steam::Game;
 use crate::utils::filter::StringFilter;
 use async_graphql::{InputObject, SimpleObject};
+use std::time::{SystemTime,  UNIX_EPOCH};
 
 #[derive(Debug, Clone, SimpleObject, InputObject)]
 pub struct GameFilter {
@@ -13,14 +14,19 @@ pub struct SteamGamesStore {
 }
 impl SteamGamesStore {
     pub async fn upsert(&self, game: &Game) -> Result<(), SteamStoreError> {
+        let at = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs_f64();
+
         sqlx::query!(
             r#"
-            INSERT INTO steam_games(id, name)
-            VALUES(?, ?)
-            ON CONFLICT(id) DO UPDATE SET name=excluded.name
+            INSERT INTO steam_games(id, name, upserted_at)
+            VALUES(?1, ?2, ?3)
+            ON CONFLICT(id)
+            DO UPDATE SET name=excluded.name
+              , upserted_at=?3
             "#,
             game.id,
-            game.name
+            game.name,
+            at,
         )
         .execute(&self.pool)
         .await
@@ -28,13 +34,13 @@ impl SteamGamesStore {
         .map_err(SteamStoreError::Sqlx)
     }
 
-    pub async fn get_last_updated(&self) -> Result<Option<Game>, SteamStoreError> {
+    pub async fn get_last_upserted(&self) -> Result<Option<Game>, SteamStoreError> {
         sqlx::query_as!(
             Game,
             r#"
             SELECT id as "id!: _", name as "name!"
             FROM steam_games
-            ORDER BY updated_at DESC
+            ORDER BY upserted_at DESC
             LIMIT 1
             "#
         )

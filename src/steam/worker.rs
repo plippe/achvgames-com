@@ -78,7 +78,7 @@ impl SteamWorker {
 
     async fn get_memento(&self) -> Result<Option<u32>, SteamWorkerError> {
         self.games_store
-            .get_last_updated()
+            .get_last_upserted()
             .await?
             .map(|game| game.id)
             .pipe(Ok)

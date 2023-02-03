@@ -29,9 +29,8 @@ impl SteamGameAchievementsStore {
             r#"
             INSERT INTO steam_game_achievements(steam_game_id, name, description, icon_locked_url, icon_unlocked_url)
             VALUES(?, ?, ?, ?, ?)
-            ON CONFLICT(steam_game_id, name) DO
-            UPDATE
-            SET description=excluded.description
+            ON CONFLICT(steam_game_id, name)
+            DO UPDATE SET description=excluded.description
               , icon_locked_url=excluded.icon_locked_url
               , icon_unlocked_url=excluded.icon_unlocked_url
             "#,
