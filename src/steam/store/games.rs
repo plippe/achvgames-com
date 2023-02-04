@@ -2,7 +2,7 @@ use crate::steam::store::SteamStoreError;
 use crate::steam::Game;
 use crate::utils::filter::StringFilter;
 use async_graphql::{InputObject, SimpleObject};
-use std::time::{SystemTime,  UNIX_EPOCH};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(Debug, Clone, SimpleObject, InputObject)]
 pub struct GameFilter {
@@ -14,7 +14,10 @@ pub struct SteamGamesStore {
 }
 impl SteamGamesStore {
     pub async fn upsert(&self, game: &Game) -> Result<(), SteamStoreError> {
-        let at = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs_f64();
+        let at = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs_f64();
 
         sqlx::query!(
             r#"

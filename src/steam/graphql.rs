@@ -41,7 +41,7 @@ impl Query {
                     start_cursor: edges.first().map(|edge| edge.cursor.clone()),
                     end_cursor: edges.last().map(|edge| edge.cursor.clone()),
                 },
-                edges: edges,
+                edges,
             })
     }
 }

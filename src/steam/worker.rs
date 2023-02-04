@@ -21,7 +21,7 @@ pub enum SteamWorkerError {
 impl std::error::Error for SteamWorkerError {}
 impl std::fmt::Display for SteamWorkerError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{:?}", self)
+        write!(f, "{self:?}")
     }
 }
 
@@ -44,12 +44,12 @@ pub struct SteamWorker {
 }
 
 impl SteamWorker {
-    const MAX_CONCURRENCY: usize = 100;
+    const MAX_CONCURRENCY: usize = 25;
 
     pub async fn work(&self) -> Result<(), SteamWorkerError> {
         println!("Getting memento");
         let memento = self.get_memento().await?.unwrap_or_default();
-        println!("Getting memento - {}", memento);
+        println!("Getting memento - {memento}");
 
         println!("Getting app ids");
         let app_ids = self
@@ -61,7 +61,7 @@ impl SteamWorker {
             .chain(memento.pipe(future::ready).pipe(stream::once));
 
         let count = app_ids
-            .inspect(|app_id| println!("Getting game - {}", app_id))
+            .inspect(|app_id| println!("Getting game - {app_id}"))
             .map(|app_id| self.get_game(app_id))
             .buffer_unordered(Self::MAX_CONCURRENCY)
             .inspect_ok(|game_with_achv| println!("Setting app - {}", game_with_achv.game.id))
@@ -71,7 +71,7 @@ impl SteamWorker {
             .count()
             .await;
 
-        println!("Finished - {}", count);
+        println!("Finished - {count}");
 
         Ok(())
     }
@@ -137,7 +137,7 @@ impl SteamWorker {
     fn is_critical(&self, res: &Result<(), SteamWorkerError>) -> bool {
         match res {
             Err(SteamWorkerError::Store(err)) => {
-                println!("Store error: {:?}", err);
+                println!("Store error: {err:?}");
                 true
             }
             Err(SteamWorkerError::Client(SteamClientError::TooManyRequests)) => {
@@ -145,7 +145,7 @@ impl SteamWorker {
                 true
             }
             Err(SteamWorkerError::Client(SteamClientError::Unknown(status, body))) => {
-                println!("Unknown steam client response: {}, {}", status, body);
+                println!("Unknown steam client response: {status}, {body}");
                 true
             }
             _ => false,
