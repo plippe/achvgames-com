@@ -1,5 +1,5 @@
 use crate::steam;
-use crate::utils::pipe::PipeExt;
+use chaining::Pipe;
 use async_graphql::OutputType;
 use async_graphql::{scalar, SimpleObject};
 

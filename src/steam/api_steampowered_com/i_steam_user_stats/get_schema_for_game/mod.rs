@@ -42,12 +42,12 @@ impl crate::steam::api_steampowered_com::Request for Request {
     }
 }
 
-impl From<(Request, Response)> for GameWithAchievements {
-    fn from((req, res): (Request, Response)) -> GameWithAchievements {
+impl GameWithAchievements {
+    pub fn from_request_and_response(req: &Request, res: &Response) -> GameWithAchievements {
         GameWithAchievements {
             game: Game {
                 id: req.app_id,
-                name: res.game.game_name,
+                name: res.game.game_name.clone(),
             },
             achievements: res
                 .game

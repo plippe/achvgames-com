@@ -20,6 +20,7 @@ dependencies = [
  "async-graphql-tide",
  "async-std",
  "base64 0.13.0",
+ "chaining",
  "futures",
  "itertools",
  "lazy_static",
@@ -611,6 +612,12 @@ name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
+
+[[package]]
+name = "chaining"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f02d0e192a91ba020938df21ab30da90d7ba3c646fa3669c9e371eb9d08a6d85"
 
 [[package]]
 name = "chrono"

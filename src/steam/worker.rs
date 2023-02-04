@@ -6,7 +6,7 @@ use crate::steam::store::game_achievements::SteamGameAchievementsStore;
 use crate::steam::store::games::SteamGamesStore;
 use crate::steam::store::SteamStoreError;
 use crate::steam::GameWithAchievements;
-use crate::utils::pipe::PipeExt;
+use chaining::Pipe;
 use futures::future;
 use futures::stream::{self, StreamExt, TryStreamExt};
 use itertools::Itertools;
@@ -112,7 +112,7 @@ impl SteamWorker {
         self.api_client
             .request::<get_schema_for_game::Request, get_schema_for_game::Response>(&req)
             .await?
-            .pipe(|res| GameWithAchievements::from((req, res)))
+            .pipe(|res| GameWithAchievements::from_request_and_response(&req, &res))
             .pipe(Ok)
     }
 

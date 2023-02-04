@@ -3,7 +3,7 @@ use crate::steam::store::games::GameFilter;
 use crate::steam::store::games::SteamGamesStore;
 use crate::steam::{Game, GameAchievement, GameImages};
 use crate::utils::page::{Cursor, Page, PageInfo};
-use crate::utils::pipe::PipeExt;
+use chaining::Pipe;
 
 pub struct Query;
 

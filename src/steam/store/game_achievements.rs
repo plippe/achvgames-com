@@ -1,6 +1,6 @@
 use crate::steam::store::SteamStoreError;
 use crate::steam::GameAchievement;
-use crate::utils::pipe::PipeExt;
+use chaining::Pipe;
 use futures::stream::{self, StreamExt, TryStreamExt};
 
 pub struct SteamGameAchievementsStore {
