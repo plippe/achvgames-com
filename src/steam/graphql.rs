@@ -2,7 +2,7 @@ use crate::steam::store::game_achievements::SteamGameAchievementsStore;
 use crate::steam::store::games::GameFilter;
 use crate::steam::store::games::SteamGamesStore;
 use crate::steam::{Game, GameAchievement, GameImages};
-use crate::utils::page::{Cursor, Edge, Page, PageInfo};
+use crate::utils::connection::{Connection, Cursor, Edge, PageInfo};
 use chaining::Pipe;
 
 pub struct Query;
@@ -23,7 +23,7 @@ impl Query {
         filter: Option<GameFilter>,
         #[graphql(default = 10, validator(minimum = 10, maximum = 10))] first: usize,
         after: Option<Cursor>,
-    ) -> Page<Game> {
+    ) -> Connection<Game> {
         ctx.data_unchecked::<SteamGamesStore>()
             .get_all(filter, first, after.and_then(Cursor::try_into_u32))
             .await
@@ -34,7 +34,7 @@ impl Query {
                 node: game,
             })
             .collect::<Vec<Edge<Game>>>()
-            .pipe(|edges| Page {
+            .pipe(|edges| Connection {
                 page_info: PageInfo {
                     has_next_page: edges.len() == first,
                     has_previous_page: false,

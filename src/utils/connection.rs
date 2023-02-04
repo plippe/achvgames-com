@@ -6,7 +6,7 @@ use chaining::Pipe;
 
 #[derive(SimpleObject)]
 #[graphql(concrete(name = "PageSteamGame", params(steam::Game)))]
-pub struct Page<A: OutputType> {
+pub struct Connection<A: OutputType> {
     pub edges: Vec<Edge<A>>,
     pub page_info: PageInfo,
 }
