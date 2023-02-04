@@ -2,7 +2,7 @@ use crate::steam::store::game_achievements::SteamGameAchievementsStore;
 use crate::steam::store::games::GameFilter;
 use crate::steam::store::games::SteamGamesStore;
 use crate::steam::{Game, GameAchievement, GameImages};
-use crate::utils::page::{Cursor, Page, PageInfo};
+use crate::utils::page::{Cursor, Edge, Page, PageInfo};
 use chaining::Pipe;
 
 pub struct Query;
@@ -28,12 +28,20 @@ impl Query {
             .get_all(filter, first, after.and_then(Cursor::try_into_u32))
             .await
             .unwrap_or_default()
-            .pipe(|nodes| Page {
-                nodes: nodes.clone(),
+            .into_iter()
+            .map(|game| Edge {
+                cursor: Cursor::from_u32(game.id),
+                node: game,
+            })
+            .collect::<Vec<Edge<Game>>>()
+            .pipe(|edges| Page {
                 page_info: PageInfo {
-                    has_next_page: nodes.len() == first,
-                    end_cursor: nodes.last().map(|game| Cursor::from_u32(game.id)),
+                    has_next_page: edges.len() == first,
+                    has_previous_page: false,
+                    start_cursor: edges.first().map(|edge| edge.cursor.clone()),
+                    end_cursor: edges.last().map(|edge| edge.cursor.clone()),
                 },
+                edges: edges,
             })
     }
 }
