@@ -76,7 +76,7 @@ impl SteamWorker {
         Ok(())
     }
 
-    async fn get_memento(&self) -> Result<Option<u32>, SteamWorkerError> {
+    async fn get_memento(&self) -> Result<Option<i64>, SteamWorkerError> {
         self.games_store
             .get_last_upserted()
             .await?
@@ -86,7 +86,7 @@ impl SteamWorker {
 
     async fn get_game_ids(
         &self,
-    ) -> Result<futures::stream::Iter<std::vec::IntoIter<u32>>, SteamWorkerError> {
+    ) -> Result<futures::stream::Iter<std::vec::IntoIter<i64>>, SteamWorkerError> {
         let req = get_app_list::Request {
             key: environment::STEAM_WEB_API_KEY.to_owned(),
         };
@@ -103,7 +103,7 @@ impl SteamWorker {
             .pipe(Ok)
     }
 
-    async fn get_game(&self, app_id: u32) -> Result<GameWithAchievements, SteamWorkerError> {
+    async fn get_game(&self, app_id: i64) -> Result<GameWithAchievements, SteamWorkerError> {
         let req = get_schema_for_game::Request {
             key: environment::STEAM_WEB_API_KEY.to_owned(),
             app_id,

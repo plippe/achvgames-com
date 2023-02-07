@@ -9,7 +9,7 @@ use async_graphql::SimpleObject;
 #[derive(Debug, Clone, PartialEq, sqlx::FromRow, SimpleObject)]
 #[graphql(complex)]
 pub struct Game {
-    pub id: u32,
+    pub id: i64,
     pub name: String,
 }
 

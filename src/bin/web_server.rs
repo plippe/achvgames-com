@@ -5,7 +5,7 @@ use async_graphql::{
     http::{playground_source, GraphQLPlaygroundConfig},
     EmptyMutation, EmptySubscription, Object, Schema,
 };
-use sqlx::sqlite::SqlitePool;
+use sqlx::postgres::PgPool;
 use tide::{http::mime, Body, Response, StatusCode};
 
 struct QueryRoot;
@@ -19,7 +19,7 @@ impl QueryRoot {
 
 #[async_std::main]
 async fn main() -> tide::Result<()> {
-    let pool = SqlitePool::connect(&environment::DATABASE_URL).await?;
+    let pool = PgPool::connect(&environment::DATABASE_URL).await?;
 
     let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
         .data(SteamGamesStore { pool: pool.clone() })

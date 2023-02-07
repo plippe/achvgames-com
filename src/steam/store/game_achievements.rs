@@ -2,15 +2,16 @@ use crate::steam::store::SteamStoreError;
 use crate::steam::GameAchievement;
 use chaining::Pipe;
 use futures::stream::{self, StreamExt, TryStreamExt};
+use sqlx::postgres::PgPool;
 
 pub struct SteamGameAchievementsStore {
-    pub pool: sqlx::Pool<sqlx::Sqlite>,
+    pub pool: PgPool,
 }
 
 impl SteamGameAchievementsStore {
     pub async fn upsert_bulk(
         &self,
-        game_id: u32,
+        game_id: i64,
         game_achievements: &[GameAchievement],
     ) -> Result<(), SteamStoreError> {
         game_achievements
@@ -22,13 +23,13 @@ impl SteamGameAchievementsStore {
 
     async fn upsert(
         &self,
-        game_id: u32,
+        game_id: i64,
         game_achievement: &GameAchievement,
     ) -> Result<(), SteamStoreError> {
         sqlx::query!(
             r#"
             INSERT INTO steam_game_achievements(steam_game_id, name, description, icon_locked_url, icon_unlocked_url)
-            VALUES(?, ?, ?, ?, ?)
+            VALUES($1, $2, $3, $4, $5)
             ON CONFLICT(steam_game_id, name)
             DO UPDATE SET description=excluded.description
               , icon_locked_url=excluded.icon_locked_url
@@ -48,14 +49,14 @@ impl SteamGameAchievementsStore {
 
     pub async fn get_by_game_id(
         &self,
-        game_id: u32,
+        game_id: i64,
     ) -> Result<Vec<GameAchievement>, SteamStoreError> {
         sqlx::query_as!(
             GameAchievement,
             r#"
             SELECT name, description, icon_locked_url, icon_unlocked_url
             FROM steam_game_achievements
-            WHERE steam_game_id = ?
+            WHERE steam_game_id = $1
             "#,
             game_id,
         )

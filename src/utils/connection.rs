@@ -30,15 +30,15 @@ pub struct Cursor(pub String);
 scalar!(Cursor);
 
 impl Cursor {
-    pub fn try_into_u32(self) -> Option<u32> {
+    pub fn try_into_i64(self) -> Option<i64> {
         URL_SAFE_NO_PAD
             .decode(self.0)
             .ok()
             .and_then(|bytes| String::from_utf8(bytes).ok())
-            .and_then(|str| str.parse::<u32>().ok())
+            .and_then(|str| str.parse::<i64>().ok())
     }
 
-    pub fn from_u32(value: u32) -> Cursor {
+    pub fn from_i64(value: i64) -> Cursor {
         URL_SAFE_NO_PAD.encode(value.to_string()).pipe(Cursor)
     }
 }

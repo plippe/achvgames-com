@@ -9,7 +9,7 @@ pub struct Query;
 
 #[async_graphql::Object]
 impl Query {
-    async fn game(&self, ctx: &async_graphql::Context<'_>, id: u32) -> Option<Game> {
+    async fn game(&self, ctx: &async_graphql::Context<'_>, id: i64) -> Option<Game> {
         ctx.data_unchecked::<SteamGamesStore>()
             .get_by_id(id)
             .await
@@ -21,22 +21,22 @@ impl Query {
         &self,
         ctx: &async_graphql::Context<'_>,
         filter: Option<GameFilter>,
-        #[graphql(default = 10, validator(minimum = 10, maximum = 10))] first: usize,
+        #[graphql(default = 10, validator(minimum = 10, maximum = 10))] first: u8,
         after: Option<Cursor>,
     ) -> Connection<Game> {
         ctx.data_unchecked::<SteamGamesStore>()
-            .get_all(filter, first, after.and_then(Cursor::try_into_u32))
+            .get_all(filter, first, after.and_then(Cursor::try_into_i64))
             .await
             .unwrap_or_default()
             .into_iter()
             .map(|game| Edge {
-                cursor: Cursor::from_u32(game.id),
+                cursor: Cursor::from_i64(game.id),
                 node: game,
             })
             .collect::<Vec<Edge<Game>>>()
             .pipe(|edges| Connection {
                 page_info: PageInfo {
-                    has_next_page: edges.len() == first,
+                    has_next_page: edges.len() as u8 == first,
                     has_previous_page: false,
                     start_cursor: edges.first().map(|edge| edge.cursor.clone()),
                     end_cursor: edges.last().map(|edge| edge.cursor.clone()),

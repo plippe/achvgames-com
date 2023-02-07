@@ -14,7 +14,7 @@ pub struct ResponseAppList {
 #[derive(Deserialize, Debug)]
 pub struct ResponseApp {
     #[serde(rename = "appid")]
-    pub app_id: u32,
+    pub app_id: i64,
 }
 
 pub struct Request {

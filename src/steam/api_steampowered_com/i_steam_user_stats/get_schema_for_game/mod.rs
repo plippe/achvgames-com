@@ -33,7 +33,7 @@ pub struct ResponseAchievement {
 #[derive(Debug, Clone)]
 pub struct Request {
     pub key: String,
-    pub app_id: u32,
+    pub app_id: i64,
 }
 
 impl crate::steam::api_steampowered_com::Request for Request {
